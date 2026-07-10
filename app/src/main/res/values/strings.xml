@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">DevPulse Studio</string>
+    <string name="nav_explore">发现</string>
+    <string name="nav_saved">收藏</string>
+    <string name="nav_profile">关于</string>
+    <string name="article_detail">内容详情</string>
+    <string name="article_metadata">%1$s  ·  %2$d stars  ·  %3$s</string>
+    <string name="save_article">收藏内容</string>
+    <string name="author_avatar">作者头像</string>
+    <string name="empty_discover">暂时没有可展示的内容</string>
+    <string name="empty_saved">还没有收藏内容</string>
+    <string name="open_source">打开原始链接</string>
+    <string name="profile_description">为 Android 开发者整理值得学习的开源项目与工程实践。</string>
+    <string name="maintainer">维护者：王纯炎\n2477574245@qq.com</string>
+</resources>

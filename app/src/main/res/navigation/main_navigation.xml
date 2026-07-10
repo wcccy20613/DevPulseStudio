@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/main_navigation"
+    app:startDestination="@id/exploreFragment">
+
+    <fragment
+        android:id="@+id/exploreFragment"
+        android:name="com.chunyan.devpulsestudio.ui.ExploreFragment"
+        android:label="@string/nav_explore" />
+    <fragment
+        android:id="@+id/savedFragment"
+        android:name="com.chunyan.devpulsestudio.ui.SavedFragment"
+        android:label="@string/nav_saved" />
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="com.chunyan.devpulsestudio.ui.ProfileFragment"
+        android:label="@string/nav_profile" />
+    <fragment
+        android:id="@+id/articleDetailFragment"
+        android:name="com.chunyan.devpulsestudio.ui.ArticleDetailFragment"
+        android:label="@string/article_detail" />
+</navigation>
