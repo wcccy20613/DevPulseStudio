@@ -1,11 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Brand / Primary -->
     <color name="brand">#006D77</color>
     <color name="brand_dark">#004B52</color>
+    <color name="brand_container">#B2EBF2</color>
+    <color name="on_brand_container">#00363C</color>
+
+    <!-- Accent / Tertiary -->
     <color name="accent">#E76F51</color>
-    <color name="background">#F7F9F9</color>
-    <color name="surface">#FFFFFF</color>
-    <color name="outline">#D7E0E0</color>
-    <color name="text_secondary">#526063</color>
+    <color name="accent_container">#FFDBD1</color>
+    <color name="on_accent_container">#3B1100</color>
+
+    <!-- Surface hierarchy -->
+    <color name="background">#F6F8F8</color>
+    <color name="surface">#FCFCFC</color>
+    <color name="surface_container_low">#F2F4F4</color>
+    <color name="surface_container">#ECEEEF</color>
+    <color name="surface_container_high">#E6E8E9</color>
+
+    <!-- Outline & Text -->
+    <color name="outline">#C4CBCB</color>
+    <color name="outline_variant">#D9DFDF</color>
+    <color name="text_secondary">#576163</color>
     <color name="white">#FFFFFF</color>
+    <color name="black">#191C1D</color>
+
+    <!-- Semantic -->
+    <color name="risk_container">#FFF0DD</color>
+    <color name="risk_on_container">#6D3A00</color>
+    <color name="success">#2E7D32</color>
+    <color name="divider">#E8EBEB</color>
 </resources>

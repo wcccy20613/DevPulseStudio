@@ -1,7 +1,11 @@
 *.iml
 .gradle/
+.kotlin/
 .idea/
 local.properties
+.env
+.env.*
+!.env.example
 /build/
 /app/build/
 .externalNativeBuild/

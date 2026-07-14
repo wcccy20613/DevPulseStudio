@@ -17,6 +17,13 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    val aiGatewayUrl = providers.gradleProperty("AI_GATEWAY_URL").orNull.orEmpty().replace("\"", "\\\"")
+    val staticCatalogBaseUrl = providers.gradleProperty("STATIC_CATALOG_BASE_URL").orNull.orEmpty().replace("\"", "\\\"")
+    buildTypes.configureEach {
+        buildConfigField("String", "AI_GATEWAY_URL", "\"$aiGatewayUrl\"")
+        buildConfigField("String", "STATIC_CATALOG_BASE_URL", "\"$staticCatalogBaseUrl\"")
+    }
+
     buildFeatures {
         viewBinding = true
         buildConfig = true

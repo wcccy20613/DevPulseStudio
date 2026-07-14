@@ -1,16 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">DevPulse Studio</string>
-    <string name="nav_explore">发现</string>
-    <string name="nav_saved">收藏</string>
-    <string name="nav_profile">关于</string>
-    <string name="article_detail">内容详情</string>
-    <string name="article_metadata">%1$s  ·  %2$d stars  ·  %3$s</string>
-    <string name="save_article">收藏内容</string>
-    <string name="author_avatar">作者头像</string>
-    <string name="empty_discover">暂时没有可展示的内容</string>
-    <string name="empty_saved">还没有收藏内容</string>
-    <string name="open_source">打开原始链接</string>
-    <string name="profile_description">为 Android 开发者整理值得学习的开源项目与工程实践。</string>
-    <string name="maintainer">维护者：王纯炎\n2477574245@qq.com</string>
+    <string name="app_name">开源脉搏</string><string name="nav_explore">发现</string><string name="nav_saved">收藏</string><string name="nav_profile">关于</string><string name="article_detail">项目智能解读</string>
+    <string name="discover_title">AI 开源发现</string><string name="discover_subtitle">快速理解值得关注的项目</string><string name="saved_title">我的学习库</string><string name="saved_subtitle">收藏与持续研读的 AI 项目</string>
+    <string name="search_hint">搜索项目、作者、赛道或语言</string><string name="search_saved">搜索已收藏项目</string><string name="retry">重试</string><string name="refresh">刷新</string><string name="clear_search_history">清除记录</string><string name="daily_title">AI 今日精选</string><string name="daily_description">来自每日静态快照；仅展示有真实数据依据的项目。</string>
+    <string name="empty_search">没有匹配的 AI 项目，试试减少关键词或切换赛道</string><string name="empty_saved">还没有收藏项目\n从发现页收藏值得学习的项目吧</string><string name="empty_saved_search">收藏中没有匹配结果</string><string name="browse_discover">去发现页逛逛</string><string name="manage_saved_article">管理收藏</string>
+    <string name="error_network">当前网络不可用，且没有本地缓存。网络恢复后请下拉刷新。</string><string name="error_rate_limit">公开数据接口请求已限流，可先查看本地缓存后稍后重试</string><string name="error_unknown">加载失败，请稍后重试</string><string name="never_synced">尚未同步</string><string name="offline_cache_banner">离线模式：正在使用本地缓存；网络恢复后下拉刷新即可同步。</string>
+    <string name="cache_status">%1$d 个结果 · 正在查看缓存 · 同步于 %2$s</string><string name="live_status">%1$d 个结果 · 数据同步于 %2$s · 点击标题查看排序规则</string><string name="saved_count">共收藏 %1$d 个项目 · 数据仅保存在本机</string>
+    <string name="saved_library_summary">%1$d 个项目 · %2$d 个分类 · %3$d 个正在学习</string><string name="all_collections">全部分类</string><string name="all_statuses">全部状态</string><string name="mark_to_learn">标记为待研读</string><string name="mark_learning">标记为学习中</string><string name="mark_learned">标记为已学习</string><string name="move_collection">移至自定义分类</string><string name="collection_hint">例如：Agent 工作流</string>
+    <string name="stale_cache_status">离线可用缓存 · %1$d 个结果 · 上次同步于 %2$s</string>
+    <string name="author_avatar">仓库作者头像</string><string name="project_preview">项目 README 预览图</string><string name="save_article">加入学习库</string><string name="project_metadata">★ %1$s　⑂ %2$s　%3$s　%4$s　更新 %5$s</string><string name="quick_understanding">一句话看懂</string><string name="understand_project">看懂项目</string><string name="share">分享</string><string name="view_details">查看解读</string><string name="share_project">分享项目</string>
+    <string name="ranking_rules_title">榜单如何排序？</string><string name="ranking_rules">总榜按累计星标排序（≥50 星标）；24h 活跃按最近一天有代码推送的仓库排序（无星标门槛）；周榜（≥5 星标）、月榜（≥10 星标）限定时间内新建仓库按星标排序；最近更新按更新时间排序（≥50 星标）。主动搜索时不设星标下限。数据来自 GitHub Search API，不代表本应用的投资、质量或安全背书。</string>
+    <string name="risk_title">风险用途提醒</string><string name="risk_message">该项目可能涉及换脸、深度伪造或身份合成。请仅在获得明确授权并遵守隐私、肖像权及当地法律的前提下研究或使用。禁止用于欺诈、骚扰和未经同意的内容制作。</string><string name="continue_view">了解并继续</string>
+    <string name="project_analysis">项目速读</string><string name="project_quick_read">一分钟判断是否值得了解</string><string name="detail_what">这是什么</string><string name="detail_can_do">能做什么</string><string name="detail_for_whom">适合谁</string><string name="detail_why">为什么值得看</string><string name="detail_boundary">判断边界</string><string name="open_repository">查看原始仓库</string><string name="copy_link">复制链接</string><string name="copied">链接已复制</string><string name="project_byline">%1$s · %2$s</string>
+    <string name="add_to_learning">加入学习库</string><string name="remove_from_learning">移出学习库</string><string name="saved_toast">已加入学习库</string><string name="unsaved_toast">已移出学习库</string>
+    <string name="score_format">学习优先级 %1$d / 10</string><string name="capabilities_format">核心能力：%1$s</string><string name="audience_format">适合人群：%1$s</string><string name="strengths_format">可见优势：%1$s</string><string name="limitations_format">判断边界：%1$s</string>
+    <string name="repository_facts">仓库事实</string><string name="facts_format">星标　%1$d\n复刻　%2$d\n语言　%3$s\n许可　%4$s\n最近更新　%5$s</string><string name="unknown">未知</string><string name="deep_read_title">README 深度解读</string><string name="deep_read_fallback">完整 README 解读会优先整理项目用途、功能、使用方式和部署线索；内容不足时会明确说明。</string>
+    <string name="readme_loading">正在从公开 README 整理可核验的学习线索…</string><string name="readme_unavailable">暂未取得 README，暂时无法生成项目的深度解读。</string><string name="readme_highlights">README 章节线索：%1$s</string><string name="readme_cached">README 缓存速读 · %1$s</string><string name="readme_live">README 速读 · 刚刚同步</string>
+    <string name="similar_projects">你可能还想了解</string><string name="similar_projects_description">依据赛道、语言和公开标签的本地匹配，不代表质量背书。</string><string name="not_interested">不感兴趣</string>
+    <string name="about_title">关于与设置</string><string name="product_positioning">面向中文开发者的 AI 开源项目发现与智能解读平台。优先使用可用内容目录与本地缓存，帮助你快速理解并长期学习。</string><string name="product_loop">发现项目 → 极速理解 → 判断价值 → 收藏学习 → 持续回访</string>
+    <string name="settings_title">外观与缓存</string><string name="dark_mode">深色主题</string><string name="clear_cache">清除榜单缓存</string><string name="cache_cleared">榜单缓存已清除</string><string name="version_text">版本 1.0.0\n更新：全新 AI 项目发现、结构化速读、本地学习库与合规体验</string>
+    <string name="local_data_title">本地数据管理</string><string name="local_data_description">收藏、分类和学习状态仅保存在本机，不依赖账号登录。可导出 JSON 备份，在换机或重装后手动重新导入。</string><string name="export_backup">导出备份</string><string name="import_backup">导入备份</string><string name="export_success">备份已导出</string><string name="import_success">已导入 %1$d 条收藏</string><string name="data_error">文件无效或读写失败</string>
+    <string name="compliance_title">数据、隐私与免责声明</string><string name="compliance_text">数据源：公开 GitHub API，仓库权利归各自作者。\n\nAI 解读：当前速读基于公开仓库元数据自动整理，仅供技术学习和初步筛选，不构成安全、合规、质量或生产可用性保证。请以原始 README、许可证和代码审计为准。\n\n隐私：搜索、收藏和设置保存在本机，不上传至 DevPulse Studio 服务器。打开 GitHub 外链时适用其隐私政策。\n\n风险用途：涉及换脸、深度伪造等项目仅可用于合法、获得授权的研究。\n\n开源许可：App 采用 MIT License；第三方库遵循各自许可证。</string>
+    <string name="maintainer">开发者：王纯炎\n联系邮箱：2477574245@qq.com</string>
+    <string name="feedback_title">反馈与产品共建</string><string name="feedback_description">你的项目发现、解读质量或学习流程建议会直接影响后续迭代。反馈不会上传你的收藏和搜索记录。</string><string name="contact_developer">发送邮件反馈</string>
+    <string name="collection_filter_label">&#x5206;&#x7C7B;</string>
+    <string name="learning_status_filter_label">&#x5B66;&#x4E60;&#x72B6;&#x6001;</string>
+    <string name="navigate_back">&#x8FD4;&#x56DE;</string>
 </resources>

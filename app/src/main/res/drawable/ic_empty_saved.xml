@@ -1,0 +1,14 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="80dp"
+    android:height="80dp"
+    android:viewportWidth="80"
+    android:viewportHeight="80">
+    <!-- 空收藏图标 -->
+    <path android:fillColor="#E6E8E9"
+        android:pathData="M4,40 A36,36 0 1,1 76,40 A36,36 0 1,1 4,40 Z" />
+    <path android:fillColor="#00000000"
+        android:pathData="M24,12 L24,60 L40,50 L56,60 L56,12z"
+        android:strokeWidth="2.5"
+        android:strokeColor="#576163"
+        android:strokeLineJoin="round" />
+</vector>

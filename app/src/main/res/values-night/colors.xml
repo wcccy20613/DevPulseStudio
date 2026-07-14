@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Brand / Primary -->
+    <color name="brand">#82D3DC</color>
+    <color name="brand_dark">#82D3DC</color>
+    <color name="brand_container">#004F57</color>
+    <color name="on_brand_container">#B2EBF2</color>
+
+    <!-- Accent / Tertiary -->
+    <color name="accent">#FFB59F</color>
+    <color name="accent_container">#592A14</color>
+    <color name="on_accent_container">#FFDBD1</color>
+
+    <!-- Surface hierarchy -->
+    <color name="background">#0D1112</color>
+    <color name="surface">#121617</color>
+    <color name="surface_container_low">#151A1B</color>
+    <color name="surface_container">#191E1F</color>
+    <color name="surface_container_high">#1E2324</color>
+
+    <!-- Outline & Text -->
+    <color name="outline">#424C4E</color>
+    <color name="outline_variant">#3A4345</color>
+    <color name="text_secondary">#B2BFC1</color>
+    <color name="white">#FFFFFF</color>
+    <color name="black">#191C1D</color>
+
+    <!-- Semantic -->
+    <color name="risk_container">#4B2D08</color>
+    <color name="risk_on_container">#FFDDB4</color>
+    <color name="success">#81C784</color>
+    <color name="divider">#2A3032</color>
+</resources>
