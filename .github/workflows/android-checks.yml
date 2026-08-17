@@ -29,8 +29,12 @@ jobs:
       - uses: gradle/actions/setup-gradle@v4
       - name: Make the Gradle wrapper executable
         run: chmod +x ./gradlew
-      - name: Build debug APK, run unit tests and lint
-        run: ./gradlew --no-daemon :app:assembleDebug :app:testDebugUnitTest :app:lintDebug
+      - name: Assemble debug APK
+        run: ./gradlew --no-daemon --stacktrace :app:assembleDebug
+      - name: Run JVM unit tests
+        run: ./gradlew --no-daemon --stacktrace :app:testDebugUnitTest
+      - name: Run Android lint
+        run: ./gradlew --no-daemon --stacktrace :app:lintDebug
       - name: Upload unit-test report
         if: always()
         uses: actions/upload-artifact@v4
@@ -60,14 +64,23 @@ jobs:
       - uses: gradle/actions/setup-gradle@v4
       - name: Make the Gradle wrapper and smoke script executable
         run: chmod +x ./gradlew ./scripts/ci-emulator-smoke.sh
-      - name: Launch debug app on Android emulator
+      - name: Run Room cache test and launch debug app on Android emulator
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 35
           target: google_apis
           arch: x86_64
           disable-animations: true
-          script: ./gradlew --no-daemon :app:assembleDebug && ./scripts/ci-emulator-smoke.sh
+          script: ./gradlew --no-daemon --stacktrace :app:connectedDebugAndroidTest && ./gradlew --no-daemon --stacktrace :app:assembleDebug && ./scripts/ci-emulator-smoke.sh
+      - name: Upload Android test report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-test-report
+          path: |
+            app/build/reports/androidTests/connected/
+            app/build/outputs/androidTest-results/connected/
+          if-no-files-found: warn
       - name: Upload emulator smoke artifacts
         if: always()
         uses: actions/upload-artifact@v4
