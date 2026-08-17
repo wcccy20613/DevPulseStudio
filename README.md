@@ -1,15 +1,29 @@
 # DevPulse Studio
 
+[![Android checks](https://github.com/wcccy20613/DevPulseStudio/actions/workflows/android-checks.yml/badge.svg?branch=main)](https://github.com/wcccy20613/DevPulseStudio/actions/workflows/android-checks.yml)
+
 开源脉搏（DevPulse Studio）是一款面向中文开发者的 AI 开源项目发现与智能解读 Android 应用。它帮助用户完成发现、理解、收藏与学习，而不是复刻 GitHub 浏览器。
 
-## Highlights
+## 关键能力
 
-- Kotlin, MVVM, ViewModel, StateFlow and lifecycle-aware UI state
-- 真实 GitHub AI 仓库搜索、赛道/新晋时间窗筛选、分页与明确的排序规则
-- DeepSeek 中文 README 解读网关：为项目输出中文概述、能力、适用人群、优势、限制和学习优先级
-- Room 本地榜单快照、7 天 README 速读缓存和离线收藏学习库
-- 本地收藏分类、学习状态、JSON 导入/导出；不启用系统自动云备份
-- Material 3 三栏结构：发现、学习库、关于与设置
+- **状态与并发控制：** Kotlin、MVVM、ViewModel、StateFlow；[最新请求优先协调器](app/src/main/java/com/chunyan/devpulsestudio/ui/LatestRequestCoordinator.kt)统一处理检索、筛选和分页，避免迟到响应覆盖新列表。
+- **双数据源与弱网降级：** [Repository](app/src/main/java/com/chunyan/devpulsestudio/data/PulseRepository.kt) 组合可选静态目录、GitHub REST API 与 [Room 快照缓存](app/src/main/java/com/chunyan/devpulsestudio/data/local/PulseDatabase.kt)；网络不可用时优先展示可识别的历史缓存而非伪造推荐结果。
+- **模型访问边界：** Android 客户端不保存模型密钥；可选 Node.js 网关负责 README 中文解读的请求校验、缓存和基础限流。
+
+## 发现页核心数据流
+
+```mermaid
+flowchart LR
+    UI[Fragment / XML UI] --> VM[ViewModel + StateFlow]
+    VM --> Repository[PulseRepository]
+    Repository <--> Cache[(Room cache)]
+    Repository --> Static[Optional static catalog]
+    Repository --> GitHub[GitHub REST API]
+```
+
+## 验证
+
+`main` 分支最新 GitHub Actions 已通过 Debug APK 构建与单元测试；点击顶部徽章可查看工作流记录。
 
 ## Build
 
