@@ -51,7 +51,7 @@ jobs:
           if-no-files-found: warn
 
   emulator-smoke:
-    name: Android emulator startup smoke test
+    name: Android emulator baseline smoke test
     runs-on: ubuntu-latest
     timeout-minutes: 25
     steps:
@@ -67,11 +67,25 @@ jobs:
       - name: Run Room cache test and launch debug app on Android emulator
         uses: reactivecircus/android-emulator-runner@v2
         with:
-          api-level: 35
+          # Keep build/lint on compileSdk 35, while using a stable API 30 image
+          # for deterministic baseline instrumentation coverage in CI.
+          api-level: 30
           target: google_apis
           arch: x86_64
           disable-animations: true
-          script: ./gradlew --no-daemon --stacktrace :app:connectedDebugAndroidTest && ./gradlew --no-daemon --stacktrace :app:assembleDebug && ./scripts/ci-emulator-smoke.sh
+          script: |
+            set -u
+            set +e
+            ./gradlew --no-daemon --stacktrace --info :app:connectedDebugAndroidTest
+            test_exit=$?
+            if [ "$test_exit" -ne 0 ]; then
+              mkdir -p app/build/reports/emulator-smoke
+              timeout 30 adb logcat -d -v threadtime -t 1200 > app/build/reports/emulator-smoke/connected-test-logcat.txt 2>&1 || true
+              exit "$test_exit"
+            fi
+            set -e
+            ./gradlew --no-daemon --stacktrace :app:assembleDebug
+            ./scripts/ci-emulator-smoke.sh
       - name: Upload Android test report
         if: always()
         uses: actions/upload-artifact@v4

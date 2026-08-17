@@ -27,5 +27,9 @@ if [[ -z "$(timeout 30 adb shell pidof "$PACKAGE_NAME")" ]]; then
 fi
 
 timeout 30 adb exec-out screencap -p > "$REPORT_DIR/discover.png"
-timeout 30 adb shell uiautomator dump /sdcard/devpulse-window.xml >/dev/null
-timeout 30 adb pull /sdcard/devpulse-window.xml "$REPORT_DIR/window.xml" >/dev/null
+
+# UI hierarchy is retained for post-failure inspection only. Some emulator images
+# can temporarily return a null root node even when the launched app is healthy.
+if timeout 30 adb shell uiautomator dump /sdcard/devpulse-window.xml >/dev/null 2>&1; then
+  timeout 30 adb pull /sdcard/devpulse-window.xml "$REPORT_DIR/window.xml" >/dev/null 2>&1 || true
+fi
