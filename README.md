@@ -19,6 +19,19 @@ Open the project with Android Studio, configure the Android SDK in `local.proper
 ./gradlew :app:assembleDebug
 ```
 
+### Quality checks
+
+Run the local debug build and unit-test suite with:
+
+```bash
+./gradlew :app:assembleDebug :app:testDebugUnitTest
+```
+
+GitHub Actions runs the same checks for pull requests and changes to `main`.
+The discovery screen uses a latest-request-wins coordinator: changing a query,
+filter, or ranking cancels the previous load and prevents a late response from
+overwriting newer results.
+
 ## AI 服务边界
 
 客户端从公开仓库读取 README；可选的服务端网关使用 DeepSeek 生成结构化中文解读。任何模型 API Key 只能配置在网关环境变量中，绝不能写入 Android 工程或 APK。

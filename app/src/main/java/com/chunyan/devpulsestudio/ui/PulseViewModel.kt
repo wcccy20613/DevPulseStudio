@@ -11,8 +11,8 @@ import com.chunyan.devpulsestudio.data.LearningStatus
 import com.chunyan.devpulsestudio.data.LoadResult
 import com.chunyan.devpulsestudio.data.PulseRepository
 import com.chunyan.devpulsestudio.data.Ranking
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -61,7 +61,7 @@ class PulseViewModel(
     private val _dailyProjects = MutableStateFlow<List<DailyProject>>(emptyList())
     val dailyProjects: StateFlow<List<DailyProject>> = _dailyProjects.asStateFlow()
 
-    private var searchJob: Job? = null
+    private val discoverRequests = LatestRequestCoordinator(viewModelScope)
 
     companion object {
         private const val SEARCH_DEBOUNCE_MS = 500L
@@ -75,12 +75,9 @@ class PulseViewModel(
     // ── Filters ───────────────────────────────────────
 
     fun setQuery(value: String) {
+        if (_discover.value.query == value) return
         _discover.update { it.copy(query = value) }
-        searchJob?.cancel()
-        searchJob = viewModelScope.launch {
-            delay(SEARCH_DEBOUNCE_MS)
-            refresh()
-        }
+        requestFirstPage(debounceMs = SEARCH_DEBOUNCE_MS)
     }
 
     fun setTrack(value: AiTrack) {
@@ -97,32 +94,16 @@ class PulseViewModel(
 
     // ── Data loading ──────────────────────────────────
 
-    fun refresh(force: Boolean = false) = viewModelScope.launch {
-        val current = _discover.value
-        _discover.value = current.copy(
-            isLoading = true,
-            isPaging = false,
-            error = null,
-            page = 1,
-        )
-        val result = repository.loadDiscoveries(
-            ranking = current.ranking,
-            track = current.track,
-            query = current.query,
-            page = 1,
-            forceRefresh = force,
-        )
-        applyResult(result, append = false)
-
-        if (force) refreshDailyProjects()
+    fun refresh(force: Boolean = false) {
+        requestFirstPage(force = force)
     }
 
     fun loadMore() {
         val current = _discover.value
         if (!current.canLoadMore) return
 
-        viewModelScope.launch {
-            _discover.update { it.copy(isPaging = true) }
+        _discover.update { it.copy(isPaging = true) }
+        discoverRequests.launchLatest { requestId ->
             val result = repository.loadDiscoveries(
                 ranking = current.ranking,
                 track = current.track,
@@ -130,11 +111,38 @@ class PulseViewModel(
                 page = current.page + 1,
                 forceRefresh = false,
             )
-            applyResult(result, append = true)
+            currentCoroutineContext().ensureActive()
+            if (discoverRequests.isCurrent(requestId)) {
+                applyResult(result, append = true, query = current.query)
+            }
         }
     }
 
-    private suspend fun applyResult(result: LoadResult, append: Boolean) {
+    private fun requestFirstPage(force: Boolean = false, debounceMs: Long = 0L) {
+        discoverRequests.launchLatest(debounceMs) { requestId ->
+            val current = _discover.value
+            _discover.value = current.copy(
+                isLoading = true,
+                isPaging = false,
+                error = null,
+                page = 1,
+            )
+            val result = repository.loadDiscoveries(
+                ranking = current.ranking,
+                track = current.track,
+                query = current.query,
+                page = 1,
+                forceRefresh = force,
+            )
+            currentCoroutineContext().ensureActive()
+            if (discoverRequests.isCurrent(requestId)) {
+                applyResult(result, append = false, query = current.query)
+                if (force) refreshDailyProjects()
+            }
+        }
+    }
+
+    private suspend fun applyResult(result: LoadResult, append: Boolean, query: String) {
         when (result) {
             is LoadResult.Success -> {
                 _discover.update { old ->
@@ -170,8 +178,13 @@ class PulseViewModel(
             }
         }
         if (result is LoadResult.Success && !append) {
-            repository.rememberSearch(_discover.value.query)
+            repository.rememberSearch(query)
         }
+    }
+
+    override fun onCleared() {
+        discoverRequests.cancel()
+        super.onCleared()
     }
 
     // ── Saved article actions ─────────────────────────
