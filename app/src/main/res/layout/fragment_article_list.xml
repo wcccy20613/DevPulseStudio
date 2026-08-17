@@ -267,8 +267,16 @@
         android:visibility="gone">
 
         <include layout="@layout/skeleton_card" />
-        <include layout="@layout/skeleton_card" android:layout_marginTop="12dp" />
-        <include layout="@layout/skeleton_card" android:layout_marginTop="12dp" />
+        <include
+            layout="@layout/skeleton_card"
+            android:layout_width="match_parent"
+            android:layout_height="120dp"
+            android:layout_marginTop="12dp" />
+        <include
+            layout="@layout/skeleton_card"
+            android:layout_width="match_parent"
+            android:layout_height="120dp"
+            android:layout_marginTop="12dp" />
     </LinearLayout>
 
     <!-- Progress -->

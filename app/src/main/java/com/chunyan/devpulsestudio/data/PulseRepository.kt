@@ -3,6 +3,7 @@ package com.chunyan.devpulsestudio.data
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
+import android.util.Base64
 
 import com.chunyan.devpulsestudio.data.local.DiscoveryCacheDao
 import com.chunyan.devpulsestudio.data.local.DiscoveryCacheEntity
@@ -23,9 +24,10 @@ import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import retrofit2.HttpException
-import java.time.LocalDate
-import java.time.Instant
-import java.util.Base64
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
+import java.util.TimeZone
 
 sealed interface LoadResult {
     data class Success(val articles: List<Article>, val total: Int, val fromCache: Boolean, val syncedAt: Long) : LoadResult
@@ -51,6 +53,8 @@ class PulseRepository(
     private val staticCatalogApi: StaticCatalogApi?,
     private val gson: Gson,
 ) {
+    private val discoveryLoadPolicy = DiscoveryLoadPolicy()
+
     fun observeSaved(): Flow<List<Article>> = savedArticleDao.observeAll().map { entries -> entries.map { it.toArticle() } }
     fun observeSearchHistory(): Flow<List<String>> = searchHistoryDao.observeRecent().map { entries -> entries.map { it.query } }
 
@@ -71,12 +75,21 @@ class PulseRepository(
         // v2 invalidates historical empty snapshots created by the retired multi-topic OR query.
         val cacheKey = "feed_v3_${ranking.name}_${track.name}_${query.trim().lowercase()}_$page"
         val cached = discoveryCacheDao.find(cacheKey)?.toCacheEntry()
-        val cacheAge = System.currentTimeMillis() - (cached?.syncedAt ?: 0L)
-        if (!appContext.isNetworkAvailable()) {
-            return LoadResult.Failure(FailureReason.NETWORK, cached?.articles.orEmpty(), cached?.syncedAt)
-        }
-        if (!forceRefresh && cached != null && cacheAge < DISCOVERY_TTL) {
-            return LoadResult.Success(cached.articles, cached.total, true, cached.syncedAt)
+        val cachedSyncedAt = cached?.syncedAt
+        val loadDecision = discoveryLoadPolicy.beforeRemote(
+            networkAvailable = appContext.isNetworkAvailable(),
+            forceRefresh = forceRefresh,
+            cachedSyncedAt = cachedSyncedAt,
+            nowMillis = System.currentTimeMillis(),
+        )
+        when (loadDecision) {
+            DiscoveryLoadDecision.USE_FRESH_CACHE -> {
+                val freshCache = requireNotNull(cached) { "Fresh-cache decision requires a cached snapshot." }
+                return LoadResult.Success(freshCache.articles, freshCache.total, true, freshCache.syncedAt)
+            }
+            DiscoveryLoadDecision.USE_STALE_FALLBACK,
+            DiscoveryLoadDecision.SHOW_ERROR -> return LoadResult.Failure(FailureReason.NETWORK, cached?.articles.orEmpty(), cachedSyncedAt)
+            DiscoveryLoadDecision.FETCH_REMOTE -> Unit
         }
         return try {
             val result = loadStaticDiscoveries(ranking, track, query, page) ?: loadGitHubDiscoveries(ranking, track, query, page)
@@ -85,7 +98,11 @@ class PulseRepository(
             discoveryCacheDao.deleteOlderThan(System.currentTimeMillis() - MAX_CACHE_AGE)
             LoadResult.Success(entry.articles, entry.total, false, entry.syncedAt)
         } catch (error: Exception) {
-            LoadResult.Failure(error.toFailureReason(), cached?.articles.orEmpty(), cached?.syncedAt)
+            when (discoveryLoadPolicy.afterRemoteFailure(cachedSyncedAt)) {
+                DiscoveryLoadDecision.USE_STALE_FALLBACK -> LoadResult.Failure(error.toFailureReason(), cached?.articles.orEmpty(), cachedSyncedAt)
+                DiscoveryLoadDecision.SHOW_ERROR -> LoadResult.Failure(error.toFailureReason())
+                else -> error("Unexpected post-failure discovery decision.")
+            }
         }
     }
 
@@ -169,11 +186,10 @@ class PulseRepository(
                 Ranking.DAILY -> { /* no floor — 24h repos are inherently fresh */ }
             }
         }
-        val now = LocalDate.now()
         when (ranking) {
-            Ranking.DAILY -> add("pushed:>=$now")
-            Ranking.WEEKLY -> add("created:>=${now.minusDays(7)}")
-            Ranking.MONTHLY -> add("created:>=${now.minusDays(30)}")
+            Ranking.DAILY -> add("pushed:>=${searchDate(daysAgo = 0)}")
+            Ranking.WEEKLY -> add("created:>=${searchDate(daysAgo = 7)}")
+            Ranking.MONTHLY -> add("created:>=${searchDate(daysAgo = 30)}")
             else -> Unit
         }
     }.joinToString(" ")
@@ -251,7 +267,7 @@ class PulseRepository(
     private fun String?.decodeReadme(encoding: String?): String {
         if (isNullOrBlank()) return ""
         val decoded = if (encoding.equals("base64", ignoreCase = true)) {
-            runCatching { Base64.getMimeDecoder().decode(this).toString(Charsets.UTF_8) }.getOrDefault("")
+            runCatching { Base64.decode(this, Base64.DEFAULT).toString(Charsets.UTF_8) }.getOrDefault("")
         } else this
         return decoded.take(60_000)
     }
@@ -283,7 +299,22 @@ class PulseRepository(
         CacheEntry(gson.fromJson(payload, type) ?: emptyList(), total, syncedAt)
     }.getOrNull()
 
-    private fun String.toEpochMillis(): Long = runCatching { Instant.parse(this).toEpochMilli() }.getOrDefault(0L)
+    private fun searchDate(daysAgo: Int): String {
+        val utc = TimeZone.getTimeZone("UTC")
+        val calendar = Calendar.getInstance(utc).apply { add(Calendar.DAY_OF_YEAR, -daysAgo) }
+        return SimpleDateFormat("yyyy-MM-dd", Locale.US).apply { timeZone = utc }.format(calendar.time)
+    }
+
+    private fun String.toEpochMillis(): Long {
+        val utc = TimeZone.getTimeZone("UTC")
+        return listOf("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", "yyyy-MM-dd'T'HH:mm:ss'Z'")
+            .firstNotNullOfOrNull { pattern ->
+                runCatching {
+                    SimpleDateFormat(pattern, Locale.US).apply { timeZone = utc }.parse(this)?.time
+                }.getOrNull()
+            }
+            ?: 0L
+    }
 
     private fun Exception.toFailureReason() = when {
         this is HttpException && (code() == 403 || code() == 429) -> FailureReason.RATE_LIMIT
@@ -303,7 +334,6 @@ class PulseRepository(
 
     companion object {
         const val PAGE_SIZE = 20
-        const val DISCOVERY_TTL = 12 * 60 * 60 * 1000L
         private const val README_ANALYSIS_VERSION = 6
         const val README_TTL = 7 * 24 * 60 * 60 * 1000L
         const val MAX_CACHE_AGE = 30 * 24 * 60 * 60 * 1000L
