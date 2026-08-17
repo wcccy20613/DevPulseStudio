@@ -45,3 +45,33 @@ jobs:
           name: lint-report
           path: app/build/reports/lint-results-debug.html
           if-no-files-found: warn
+
+  emulator-smoke:
+    name: Android emulator startup smoke test
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+      - uses: android-actions/setup-android@v3
+      - uses: gradle/actions/setup-gradle@v4
+      - name: Make the Gradle wrapper and smoke script executable
+        run: chmod +x ./gradlew ./scripts/ci-emulator-smoke.sh
+      - name: Launch debug app on Android emulator
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 35
+          target: google_apis
+          arch: x86_64
+          disable-animations: true
+          script: ./gradlew --no-daemon :app:assembleDebug && ./scripts/ci-emulator-smoke.sh
+      - name: Upload emulator smoke artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: emulator-smoke-artifacts
+          path: app/build/reports/emulator-smoke/
+          if-no-files-found: warn
