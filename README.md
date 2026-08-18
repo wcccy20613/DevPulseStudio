@@ -23,7 +23,7 @@ flowchart LR
 
 ## 验证
 
-`main` 分支最新 GitHub Actions 已通过 Debug APK 构建与单元测试；点击顶部徽章可查看工作流记录。
+`main` 分支 GitHub Actions 已通过 Debug APK 构建、20 项 JVM 单元测试、Lint，以及 API 30 模拟器上的 Room DAO instrumentation test 与应用启动烟测；可查看[完整验证记录](https://github.com/wcccy20613/DevPulseStudio/actions/runs/32110600051)。
 
 ## Build
 
