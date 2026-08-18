@@ -63,7 +63,7 @@ jobs:
       - uses: android-actions/setup-android@v3
       - uses: gradle/actions/setup-gradle@v5
       - name: Make the Gradle wrapper and smoke script executable
-        run: chmod +x ./gradlew ./scripts/ci-emulator-smoke.sh
+        run: chmod +x ./gradlew ./scripts/ci-emulator-smoke.sh ./scripts/ci-wait-for-android-framework.sh
       - name: Enable KVM access for the Android emulator
         run: |
           test -c /dev/kvm
@@ -84,34 +84,7 @@ jobs:
           disable-animations: false
           script: |
             set -u
-            wait_for_android_framework() {
-              attempt=0
-              while [ "$attempt" -lt 90 ]; do
-                attempt=$((attempt + 1))
-                boot_completed="$(adb shell getprop sys.boot_completed 2>/dev/null | tr -d '\r')"
-                if [ "$boot_completed" = "1" ] \
-                  && adb shell cmd package list packages >/dev/null 2>&1 \
-                  && adb shell cmd activity get-current-user >/dev/null 2>&1 \
-                  && adb shell settings get global window_animation_scale >/dev/null 2>&1; then
-                  echo "Android framework is ready."
-                  return 0
-                fi
-                sleep 2
-              done
-              echo "Android framework readiness check timed out." >&2
-              mkdir -p app/build/reports/emulator-smoke
-              adb shell getprop > app/build/reports/emulator-smoke/framework-readiness-getprop.txt 2>&1 || true
-              adb shell service list > app/build/reports/emulator-smoke/framework-readiness-services.txt 2>&1 || true
-              timeout 30 adb logcat -d -v threadtime -t 1200 > app/build/reports/emulator-smoke/framework-readiness-logcat.txt 2>&1 || true
-              return 1
-            }
-            wait_for_android_framework
-            for setting in window_animation_scale transition_animation_scale animator_duration_scale; do
-              if ! adb shell settings put global "$setting" 0.0; then
-                echo "Failed to disable animations after the framework readiness check." >&2
-                exit 1
-              fi
-            done
+            ./scripts/ci-wait-for-android-framework.sh app/build/reports/emulator-smoke
             set +e
             ./gradlew --no-daemon --stacktrace --info :app:connectedDebugAndroidTest
             test_exit=$?
