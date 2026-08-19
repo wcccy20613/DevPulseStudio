@@ -32,7 +32,8 @@ fi
 timeout 30 adb exec-out screencap -p > "$REPORT_DIR/discover.png"
 
 # Create a short, deterministic portfolio demo from the same real emulator run.
-# Coordinates are expressed for the 720x1440 / 320 dpi viewport configured above.
+# The API 30 runner reports a 640x1280 input surface even when screenrecord is
+# encoded at 720x1440, so navigation taps must stay inside that input surface.
 timeout 30 adb shell rm -f "$DEMO_VIDEO_DEVICE_PATH"
 timeout 30 adb shell input tap 568 806 # Save the first visible project.
 sleep 2
@@ -52,10 +53,10 @@ timeout 30 adb shell input swipe 360 1120 360 520 600
 sleep 3
 timeout 30 adb shell input keyevent 4
 sleep 2
-timeout 30 adb shell input tap 360 1360 # Open the saved-project tab.
+timeout 30 adb shell input tap 320 1200 # Open the saved-project tab.
 sleep 4
 timeout 30 adb exec-out screencap -p > "$REPORT_DIR/saved.png"
-timeout 30 adb shell input tap 600 1360 # Open the about/settings tab.
+timeout 30 adb shell input tap 530 1200 # Open the about/settings tab.
 sleep 4
 timeout 30 adb exec-out screencap -p > "$REPORT_DIR/about.png"
 
