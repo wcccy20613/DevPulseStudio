@@ -4,6 +4,31 @@
 
 开源脉搏（DevPulse Studio）是一款面向中文开发者的 AI 开源项目发现与智能解读 Android 应用。它帮助用户完成发现、理解、收藏与学习，而不是复刻 GitHub 浏览器。
 
+<p align="center">
+  <a href="docs/demo/devpulse-demo.mp4"><strong>观看 12 秒 Demo</strong></a>
+  ·
+  <a href="https://github.com/wcccy20613/DevPulseStudio/releases/download/v1.0.0-demo/DevPulse-Studio-v1.0.0-demo.apk"><strong>下载 Demo APK</strong></a>
+</p>
+
+## 运行演示
+
+<table>
+  <tr>
+    <td width="50%"><img src="docs/screenshots/discover.png" alt="DevPulse Studio 发现页" /></td>
+    <td width="50%"><img src="docs/screenshots/detail.png" alt="DevPulse Studio 项目速读详情页" /></td>
+  </tr>
+  <tr>
+    <td align="center">发现、筛选与收藏真实开源项目</td>
+    <td align="center">基于公开 README 证据生成结构化速读</td>
+  </tr>
+</table>
+
+- [观看 12 秒真实模拟器 Demo](docs/demo/devpulse-demo.mp4)：展示收藏、进入项目速读与内容滚动。
+- [下载 v1.0.0 Demo APK](https://github.com/wcccy20613/DevPulseStudio/releases/download/v1.0.0-demo/DevPulse-Studio-v1.0.0-demo.apk)：支持 Android 7.0（API 24）及以上版本。
+- APK SHA-256：`02D58DABB1B61FC5C3C5D730D023896E5AAE82D5D01F239BBF35E13264681AEC`
+
+截图与视频来自 [GitHub Actions API 30 模拟器真实运行](https://github.com/wcccy20613/DevPulseStudio/actions/runs/32222764278)，不是设计稿或 AI 生成图。APK 使用作品集 Demo 专用签名，不作为生产商店签名。
+
 ## 关键能力
 
 - **状态与并发控制：** Kotlin、MVVM、ViewModel、StateFlow；[最新请求优先协调器](app/src/main/java/com/chunyan/devpulsestudio/ui/LatestRequestCoordinator.kt)统一处理检索、筛选和分页，避免迟到响应覆盖新列表。
